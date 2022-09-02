@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "module": "ES2016",
   "scripts": {
-    "migrate": "node migrations/sqlite/index.mjs",
+    "migrate": "node migrations/index.mjs",
     "start": "NODE_ENV=local node dist/index.js",
     "dev": "NODE_ENV=local tsc -p . && nodemon src/index.ts",
     "test": "NODE_ENV=test jest",
