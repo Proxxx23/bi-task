@@ -2,35 +2,43 @@ import {Request, Response} from "express";
 import {createBooksRepository} from "../infrastructure/db/booksRepository";
 import {Book, RatingsRange} from "../models/Book";
 import {StatusCodes} from "http-status-codes";
-import {createBookFromRequest} from "../factories/bookFactory";
 import {BookId} from "../application/db/booksRepository";
+import {createBookFromRequest} from "../factories/bookFactory";
 
-interface OffsetRequest {
+type OffsetQueryParams = {
     limit?: number,
     offset?: number
 }
 
-export interface BookRequest {
+export type CreateBookRequest = {
     title: string,
     isbn: string,
+    author: string,
     pagesCount: number,
     rating: RatingsRange,
 }
 
+export type UpdateBookRequest = CreateBookRequest;
+
 const repository = createBooksRepository();
 
-export const index = async (req: Request<{}, {}, {}, OffsetRequest>, res: Response): Promise<Response<Book>> => {
+export const index = async (req: Request<{}, {}, {}, OffsetQueryParams>, res: Response): Promise<Response<Book>> => {
+    // todo: pagination
     return res.json(
-        repository.all(req.query.limit, req.query.offset)
+        await repository.all(req.query.limit, req.query.offset)
     );
 }
 
-export const create = async (req: Request<{}, {}, BookRequest>, res: Response): Promise<Response<Book[] | string>> => {
+export const create = async (req: Request<{}, {}, CreateBookRequest>, res: Response): Promise<Response<Book[] | string>> => {
+    const bookExists = await repository.findByISBN(req.body.isbn);
+    if (bookExists) {
+        return res.status(StatusCodes.CONFLICT).send('Book with given ISBN already added into DB.');
+    }
+
     const book = createBookFromRequest(req.body);
-    const moviesRepository = createBooksRepository();
 
     try {
-        await moviesRepository.add(book);
+        repository.add(book);
 
         return res.send(
             {
@@ -38,25 +46,38 @@ export const create = async (req: Request<{}, {}, BookRequest>, res: Response): 
             }
         );
     } catch (err) {
-        if (err instanceof Error) {
-            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(err.message);
-        }
-
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal error - movie not added!');
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal error - book could not have been added!');
     }
 }
 
-export const destroy = async (req: Request<{}, {}, {}, { bookId: BookId }>, res: Response): Promise<any | string> => {
-    const bookId = req.query.bookId;
-    const book = repository.findByUuid(bookId);
+export const update = async (req: Request<{ id: BookId }, undefined, UpdateBookRequest>, res: Response): Promise<Response<Book[] | string>> => {
+    const bookId = req.params.id;
+
+    const bookExists = await repository.find(bookId);
+    if (!bookExists) {
+        return res.status(StatusCodes.NOT_FOUND).send('Book with given id not found.');
+    }
+
+    try {
+        repository.update(bookId, createBookFromRequest(req.body));
+
+        return res.sendStatus(StatusCodes.NO_CONTENT);
+    } catch (err) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal error - book could not have been edited!');
+    }
+}
+
+export const destroy = async (req: Request<{ id: BookId }>, res: Response): Promise<any | string> => {
+    const bookId = req.params.id;
+    const book = await repository.find(bookId);
     if (!book) {
         return res.status(StatusCodes.NOT_FOUND).send('Book with given id not found.');
     }
 
     try {
-        repository.remove(req.query.bookId);
+        repository.remove(bookId);
     } catch (err) {
-        return res.sendStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal error - book could not have been removed!');
     }
 
     return res.sendStatus(StatusCodes.OK);
