@@ -29,11 +29,14 @@ export const create = async (req: Request<{}, {}, CreateBookRequest>, res: Respo
     const book = createBookFromRequest(req.body);
 
     try {
-        repository.add(book);
+        const id = repository.add(book);
 
         return res.send(
             {
-                data: book
+                data: {
+                    id,
+                    ...book
+                }
             }
         );
     } catch (err) {
@@ -70,5 +73,5 @@ export const destroy = async (req: Request<{ id: BookId }>, res: Response): Prom
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal error - book could not have been removed!');
     }
 
-    return res.sendStatus(StatusCodes.OK);
+    return res.sendStatus(StatusCodes.NO_CONTENT);
 }

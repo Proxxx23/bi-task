@@ -37,10 +37,10 @@ export const validateAddBookRequest = [
         .isLength(
             {
                 min: 1,
-                max: 255,
+                max: 50,
             }
         )
-        .withMessage('Book author(s) must be a string of length between 1 and 255 characters!')
+        .withMessage('Book author(s) must be a string of length between 1 and 50 characters!')
         .bail(),
     body('isbn')
         .isString()
@@ -116,10 +116,10 @@ export const validateUpdateBookRequest = [
         .isLength(
             {
                 min: 1,
-                max: 255,
+                max: 50,
             }
         )
-        .withMessage('Book author(s) must be a string of length between 1 and 255 characters!')
+        .withMessage('Book author(s) must be a string of length between 1 and 50 characters!')
         .bail(),
     body('isbn')
         .isString()

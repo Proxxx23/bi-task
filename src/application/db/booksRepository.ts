@@ -5,8 +5,8 @@ export type BookId = number;
 
 export interface BooksRepository {
     all(limit?: number, offset?: number): Promise<DBBook[] | undefined>,
-    add(book: Book): void,
-    update(bookId: BookId, book: Book): void,
+    add(book: Book): number | bigint,
+    update(bookId: BookId, book: Book): number | bigint,
     find(bookId: BookId): Promise<DBBook | undefined>,
     findByISBN(isbn: string): Promise<DBBook | undefined>,
     remove(bookId: BookId): void,
