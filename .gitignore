@@ -1,0 +1,17 @@
+db
+dist
+logs
+*.log
+npm-debug.log*
+
+.idea
+
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+*.tsbuildinfo
+
+# dotenv environment variables file
+.env
+
+# dependencies
+/node_modules
