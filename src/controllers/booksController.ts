@@ -9,7 +9,7 @@ import {DBBook} from "../models/DBBook";
 import {createCommentsRepository} from "../infrastructure/db/commentsRepository";
 
 type OffsetQueryParams = {
-    limit?: number,
+    perPage?: number,
     offset?: number
 }
 
@@ -21,7 +21,7 @@ interface IndexResponse extends DBBook {
 }
 
 export const index = async (req: Request<{}, {}, {}, OffsetQueryParams>, res: Response): Promise<Response<IndexResponse>> => {
-    const books = await booksRepository.all(req.query.limit, req.query.offset);
+    const books = await booksRepository.all(req.query.perPage, req.query.offset);
 
     // fixme: very DB extensive, should be preformed in joined query or using ORM relation
     const data = [];

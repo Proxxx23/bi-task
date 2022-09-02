@@ -73,7 +73,7 @@ describe('Endpoint to list books', () => {
 
         const response = await request(app)
             .get('/')
-            .query({limit: 3})
+            .query({perPage: 3})
             .send();
 
         expect(response.statusCode).toBe(StatusCodes.OK);
