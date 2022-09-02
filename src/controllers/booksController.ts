@@ -6,22 +6,40 @@ import {createBookFromRequest} from "../factories/bookFactory";
 import type {CreateBookRequest} from "./requests/createBookRequest";
 import type {UpdateBookRequest} from "./requests/updateBookRequest";
 import {DBBook} from "../models/DBBook";
+import {createCommentsRepository} from "../infrastructure/db/commentsRepository";
 
 type OffsetQueryParams = {
     limit?: number,
     offset?: number
 }
 
-const repository = createBooksRepository();
+const booksRepository = createBooksRepository();
+const commentsRepository = createCommentsRepository();
 
-export const index = async (req: Request<{}, {}, {}, OffsetQueryParams>, res: Response): Promise<Response<DBBook>> => {
-    return res.json(
-        await repository.all(req.query.limit, req.query.offset)
-    );
+interface IndexResponse extends DBBook {
+    lastComments: string[];
+}
+
+export const index = async (req: Request<{}, {}, {}, OffsetQueryParams>, res: Response): Promise<Response<IndexResponse>> => {
+    const books = await booksRepository.all(req.query.limit, req.query.offset);
+
+    // fixme: very DB extensive, should be preformed in joined query or using ORM relation
+    const data = [];
+    books.forEach((book) => {
+        const comments = commentsRepository.findByBookId(book.id, 5);
+        data.push(
+            {
+                ...book,
+                last_comments: comments
+            }
+        );
+    })
+
+    return res.json(data);
 }
 
 export const create = async (req: Request<{}, {}, CreateBookRequest>, res: Response): Promise<Response<DBBook[] | string>> => {
-    const bookExists = await repository.findByISBN(req.body.isbn);
+    const bookExists = await booksRepository.findByISBN(req.body.isbn);
     if (bookExists) {
         return res.status(StatusCodes.CONFLICT).send('Book with given ISBN already exists in DB.');
     }
@@ -29,7 +47,7 @@ export const create = async (req: Request<{}, {}, CreateBookRequest>, res: Respo
     const book = createBookFromRequest(req.body);
 
     try {
-        const id = repository.add(book);
+        const id = booksRepository.add(book);
 
         return res.send(
             {
@@ -46,13 +64,13 @@ export const create = async (req: Request<{}, {}, CreateBookRequest>, res: Respo
 
 export const update = async (req: Request<{ id: BookId }, undefined, UpdateBookRequest>, res: Response): Promise<Response<DBBook[] | string>> => {
     const bookId = req.params.id;
-    const bookExists = await repository.find(bookId);
+    const bookExists = await booksRepository.find(bookId);
     if (!bookExists) {
         return res.status(StatusCodes.NOT_FOUND).send('Book with given id not found.');
     }
 
     try {
-        repository.update(bookId, createBookFromRequest(req.body));
+        booksRepository.update(bookId, createBookFromRequest(req.body));
 
         return res.sendStatus(StatusCodes.NO_CONTENT);
     } catch (err) {
@@ -62,13 +80,13 @@ export const update = async (req: Request<{ id: BookId }, undefined, UpdateBookR
 
 export const destroy = async (req: Request<{ id: BookId }>, res: Response): Promise<any | string> => {
     const bookId = req.params.id;
-    const book = await repository.find(bookId);
+    const book = await booksRepository.find(bookId);
     if (!book) {
         return res.status(StatusCodes.NOT_FOUND).send('Book with given id not found.');
     }
 
     try {
-        repository.remove(bookId);
+        booksRepository.remove(bookId);
     } catch (err) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal error - book could not have been removed!');
     }

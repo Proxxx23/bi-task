@@ -12,10 +12,12 @@ type errorResp = {
 describe('Endpoint to add books', () => {
     const app = createTestServer();
 
-    const {connection: db, dbTable} = databaseConnection();
+    const {connection: db, dbTable} = databaseConnection('books');
 
-    afterAll(() => db.exec('DELETE FROM ' + dbTable));
+    beforeEach(() => db.exec('DELETE FROM ' + dbTable));
+    afterEach(() => db.exec('DELETE FROM ' + dbTable));
 
+    // fixme: problematic test
     it('responds with 404 code if book with given ISBN is already stored in DB', async () => {
         const isbn = '978-83-962-7331-4';
 
@@ -166,17 +168,12 @@ describe('Endpoint to add books', () => {
             );
 
         expect(response.statusCode).toBe(StatusCodes.OK);
-        expect(response.body).toStrictEqual({
-                data: {
-                    id: 1,
-                    title: 'Any title',
-                    isbn: '978-83-962-7331-4',
-                    author: 'Any author',
-                    pagesCount: 300,
-                    rating: 5
-                },
-            }
-        );
+        expect(response.body.data.id).toBeGreaterThanOrEqual(1);
+        expect(response.body.data.title).toStrictEqual('Any title');
+        expect(response.body.data.isbn).toStrictEqual('978-83-962-7331-4');
+        expect(response.body.data.author).toStrictEqual('Any author');
+        expect(response.body.data.pagesCount).toStrictEqual(300);
+        expect(response.body.data.rating).toStrictEqual(5);
     })
 });
 

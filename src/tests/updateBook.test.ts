@@ -12,9 +12,10 @@ type errorResp = {
 describe('Endpoint to update books', () => {
     const app = createTestServer();
 
-    const {connection: db, dbTable} = databaseConnection();
+    const {connection: db, dbTable} = databaseConnection('books');
 
-    afterAll(() => db.exec('DELETE FROM ' + dbTable));
+    beforeEach(() => db.exec('DELETE FROM ' + dbTable));
+    afterEach(() => db.exec('DELETE FROM ' + dbTable));
 
     it('responds with 404 code if book with given id does not exist in DB', async () => {
         const response = await request(app)

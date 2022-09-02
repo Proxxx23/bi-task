@@ -4,5 +4,5 @@ export interface DBBook {
     isbn: string,
     author: string,
     pages_count: string,
-    rating: number,
+    rating: number
 }

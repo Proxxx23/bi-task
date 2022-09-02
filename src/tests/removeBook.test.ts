@@ -6,7 +6,7 @@ import {databaseConnection} from "../infrastructure/db/connection";
 describe('Endpoint to remove books', () => {
     const app = createTestServer();
 
-    const {connection: db, dbTable} = databaseConnection();
+    const {connection: db, dbTable} = databaseConnection('books');
 
     beforeEach(() => db.exec('DELETE FROM ' + dbTable));
     afterAll(() => db.exec('DELETE FROM ' + dbTable));

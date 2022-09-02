@@ -174,3 +174,30 @@ export const validateUpdateBookRequest = [
         next();
     },
 ];
+
+export const validateAddCommentRequest = [
+    param('id')
+        .isNumeric()
+        .withMessage('Book id parameter must be a number!')
+        .bail(),
+    body('comment')
+        .trim()
+        .escape()
+        .isString()
+        .isLength(
+            {
+                min: 1,
+                max: 255,
+            }
+        )
+        .withMessage('Comment text must be a string of length between 1 and 255 characters!'),
+
+    (req: Request, res: Response, next: NextFunction) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({errors: errors.array()});
+        }
+
+        next();
+    },
+];

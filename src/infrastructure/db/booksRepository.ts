@@ -9,7 +9,7 @@ const DEFAULT_OFFSET = 0;
 export const createBooksRepository = (): BooksRepository => booksRepository();
 
 // fixme: there should be a standalone test repository for testing suites
-const {dbTable, connection: db} = databaseConnection();
+const {dbTable, connection: db} = databaseConnection('books');
 
 function booksRepository(): BooksRepository {
     async function all(limit: number | undefined = DEFAULT_LIMIT, offset: number | undefined = DEFAULT_OFFSET): Promise<DBBook[] | undefined> {

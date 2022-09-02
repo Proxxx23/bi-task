@@ -6,7 +6,7 @@ import {databaseConnection} from "../infrastructure/db/connection";
 describe('Endpoint to list books', () => {
     const app = createTestServer();
 
-    const {connection: db, dbTable} = databaseConnection();
+    const {connection: db, dbTable} = databaseConnection('books');
 
     beforeEach(() => db.exec('DELETE FROM ' + dbTable));
     afterAll(() => db.exec('DELETE FROM ' + dbTable));
@@ -21,7 +21,7 @@ describe('Endpoint to list books', () => {
     });
 
     it('responds with 200 code and valid data if any book stored in DB', async () => {
-        db.prepare(`INSERT INTO
+        const bookId = db.prepare(`INSERT INTO
             ${dbTable}
                 (
                     title,
@@ -32,7 +32,8 @@ describe('Endpoint to list books', () => {
                 )
             VALUES
                 (?, ?, ?, ?, ?)`)
-            .run('Test title', '123-123', 'Test Author', 200, 3);
+            .run('Test title', '123-123', 'Test Author', 200, 3)
+            .lastInsertRowid;
 
         const response = await request(app)
             .get('/')
@@ -42,12 +43,13 @@ describe('Endpoint to list books', () => {
         expect(response.body).toStrictEqual(
             [
                 {
-                    id: 1,
+                    id: bookId,
                     title: 'Test title',
                     isbn: '123-123',
                     author: 'Test Author',
                     pages_count: 200,
                     rating: 3,
+                    last_comments: []
                 }
             ]
         );

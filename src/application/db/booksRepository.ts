@@ -1,7 +1,7 @@
 import {Book} from "../../models/Book";
 import {DBBook} from "../../models/DBBook";
 
-export type BookId = number;
+export type BookId = number; // fixme: should be placed somewhere else
 
 export interface BooksRepository {
     all(limit?: number, offset?: number): Promise<DBBook[] | undefined>,
