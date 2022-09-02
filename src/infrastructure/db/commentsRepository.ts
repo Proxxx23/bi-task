@@ -1,6 +1,4 @@
-import {BookId, BooksRepository} from "../../application/db/booksRepository";
-import {Book} from "../../models/Book";
-import {DBBook} from "../../models/DBBook";
+import {BookId} from "../../application/db/booksRepository";
 import {databaseConnection} from "./connection";
 import {CommentsRepository} from "../../application/db/commentsRepository";
 

@@ -17,22 +17,20 @@ describe('Endpoint to add books', () => {
     beforeEach(() => db.exec('DELETE FROM ' + dbTable));
     afterEach(() => db.exec('DELETE FROM ' + dbTable));
 
-    // fixme: problematic test
     it('responds with 404 code if book with given ISBN is already stored in DB', async () => {
         const isbn = '978-83-962-7331-4';
 
-        db.prepare(`INSERT INTO
-            ${dbTable}
-                (
-                    title,
+        await request(app)
+            .post('/')
+            .send(
+                {
+                    title: 'Any title',
                     isbn,
-                    author,
-                    pages_count,
-                    rating
-                )
-            VALUES
-                (?, ?, ?, ?, ?)`)
-            .run('Test title', isbn, 'Test Author', 200, 3);
+                    author: 'Any author',
+                    pagesCount: 100,
+                    rating: 1
+                }
+            );
 
         const response = await request(app)
             .post('/')

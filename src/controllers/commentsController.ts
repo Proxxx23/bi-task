@@ -20,8 +20,7 @@ export const create = async (req: Request<{ id: BookId }, {}, AddCommentRequest>
         commentsRepository.add(bookId, req.body.comment);
         return res.sendStatus(StatusCodes.NO_CONTENT);
     } catch (err) {
-        console.log(err);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal error - book could not have been added!');
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal error - comment could not have been added!');
     }
 }
 

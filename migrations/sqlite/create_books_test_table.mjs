@@ -2,10 +2,9 @@ import fs from "fs";
 import {resolve} from "path";
 import Database from "better-sqlite3";
 
-(function createBooksRepository() {
+(function createBooksTestTable() {
   const db = new Database('books_test.db');
 
-  // fixme: async exec!
   db.exec(
     `CREATE TABLE IF NOT EXISTS
             books_test
@@ -20,8 +19,6 @@ import Database from "better-sqlite3";
   );
 
   fs.access(resolve('./db/books_test.db'), undefined, () => {
-      // No DB yet
-    fs.mkdir(resolve('./db'), {}, () => {});
     fs.rename(resolve('./books_test.db'), resolve('./db/books_test.db'), () => {});
   });
 })();

@@ -1,11 +1,11 @@
 import fs from "fs";
+import promisedFs from "fs/promises";
 import {resolve} from "path";
 import Database from "better-sqlite3";
 
-(function createBooksRepository() {
+(function createBooksTable() {
   const db = new Database('books.db');
 
-  // fixme: async exec!
   db.exec(
     `CREATE TABLE IF NOT EXISTS
             books
@@ -21,7 +21,8 @@ import Database from "better-sqlite3";
 
   fs.access(resolve('./db/books.db'), undefined, () => {
       // No DB yet
-    fs.mkdir(resolve('./db'), {}, () => {});
-    fs.rename(resolve('./books.db'), resolve('./db/books.db'), () => {});
+    fs.mkdir(resolve('./db'), {}, () => {
+      fs.rename(resolve('./books.db'), resolve('./db/books.db'), () => {})
+    });
   });
 })();

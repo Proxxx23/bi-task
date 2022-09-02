@@ -6,7 +6,7 @@ export const databaseConnection = (name: string) => {
         : name + '_test.db';
 
     const connection = new Database(__dirname + '/../../../db/' + dbName, {
-        fileMustExist: true
+        fileMustExist: true,
     });
 
     const dbTable = dbName.replace('.db', '');

@@ -18,7 +18,13 @@ Tests use `testServer.ts`. NODE_ENV env variable is set to a value different tha
 
 To run tests: `npm run test`
 
-### Endpoints
+## Troubleshooting
+There may be a problem with running migrations. Please ensure all four tables in `./db` directory were created after `npm run migrate` command was run.
+
+## SQLite DB note
+`better-sqlite3` package cannot deal with foreign keys properly, even if supporting these in docs. That's why I've decided to not to make any relations between tables, as it resulted in various problems. 
+
+## Endpoints
 
 | Endpoints                                                                       |
 |---------------------------------------------------------------------------------|
