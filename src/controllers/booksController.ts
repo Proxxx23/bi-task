@@ -1,38 +1,29 @@
 import {Request, Response} from "express";
 import {createBooksRepository} from "../infrastructure/db/booksRepository";
-import {Book, RatingsRange} from "../models/Book";
 import {StatusCodes} from "http-status-codes";
-import {BookId} from "../application/db/booksRepository";
+import type {BookId} from "../application/db/booksRepository";
 import {createBookFromRequest} from "../factories/bookFactory";
+import type {CreateBookRequest} from "./requests/createBookRequest";
+import type {UpdateBookRequest} from "./requests/updateBookRequest";
+import {DBBook} from "../models/DBBook";
 
 type OffsetQueryParams = {
     limit?: number,
     offset?: number
 }
 
-export type CreateBookRequest = {
-    title: string,
-    isbn: string,
-    author: string,
-    pagesCount: number,
-    rating: RatingsRange,
-}
-
-export type UpdateBookRequest = CreateBookRequest;
-
 const repository = createBooksRepository();
 
-export const index = async (req: Request<{}, {}, {}, OffsetQueryParams>, res: Response): Promise<Response<Book>> => {
-    // todo: pagination
+export const index = async (req: Request<{}, {}, {}, OffsetQueryParams>, res: Response): Promise<Response<DBBook>> => {
     return res.json(
         await repository.all(req.query.limit, req.query.offset)
     );
 }
 
-export const create = async (req: Request<{}, {}, CreateBookRequest>, res: Response): Promise<Response<Book[] | string>> => {
+export const create = async (req: Request<{}, {}, CreateBookRequest>, res: Response): Promise<Response<DBBook[] | string>> => {
     const bookExists = await repository.findByISBN(req.body.isbn);
     if (bookExists) {
-        return res.status(StatusCodes.CONFLICT).send('Book with given ISBN already added into DB.');
+        return res.status(StatusCodes.CONFLICT).send('Book with given ISBN already exists in DB.');
     }
 
     const book = createBookFromRequest(req.body);
@@ -50,9 +41,8 @@ export const create = async (req: Request<{}, {}, CreateBookRequest>, res: Respo
     }
 }
 
-export const update = async (req: Request<{ id: BookId }, undefined, UpdateBookRequest>, res: Response): Promise<Response<Book[] | string>> => {
+export const update = async (req: Request<{ id: BookId }, undefined, UpdateBookRequest>, res: Response): Promise<Response<DBBook[] | string>> => {
     const bookId = req.params.id;
-
     const bookExists = await repository.find(bookId);
     if (!bookExists) {
         return res.status(StatusCodes.NOT_FOUND).send('Book with given id not found.');

@@ -1,7 +1,11 @@
 import {BookId, BooksRepository} from "../../application/db/booksRepository";
 import {Book} from "../../models/Book";
+import {DBBook} from "../../models/DBBook";
 
 import Database from "better-sqlite3";
+
+const DEFAULT_LIMIT = 100;
+const DEFAULT_OFFSET = 0;
 
 export const createBooksRepository = (): BooksRepository => booksRepository();
 
@@ -10,20 +14,17 @@ const db = new Database(__dirname + '/../../../db/books.db', {
 });
 
 function booksRepository(): BooksRepository {
-    async function all(limit: number = 100, offset: number = 0): Promise<any> {
-        // todo: create DB DTO object
-        return db.prepare(`SELECT * FROM books LIMIT ? OFFSET ?`)
-            .get(limit, offset);
+    async function all(limit: number | undefined = DEFAULT_LIMIT, offset: number | undefined = DEFAULT_OFFSET): Promise<DBBook[] | undefined> {
+        return db.prepare(`SELECT * FROM books ORDER BY id LIMIT ? OFFSET ?`)
+            .all(limit, offset);
     }
 
-    async function find(bookId: BookId): Promise<any> {
-        // todo: create DB DTO object
+    async function find(bookId: BookId): Promise<DBBook | undefined> {
         return db.prepare(`SELECT * FROM books WHERE id = ?`)
             .get(bookId);
     }
 
-    async function findByISBN(isbn: string): Promise<any> {
-        // todo: create DB DTO object
+    async function findByISBN(isbn: string): Promise<DBBook | undefined> {
         return db.prepare(`SELECT * FROM books WHERE isbn = ?`)
             .get(isbn);
     }
@@ -43,8 +44,8 @@ function booksRepository(): BooksRepository {
             .run(book.title, book.isbn, book.author, book.pagesCount, book.rating);
     }
 
-    function update(bookId: BookId, book: Book): void {
-        db.prepare(`UPDATE
+    function update(bookId: BookId, book: Book): number | bigint {
+        return db.prepare(`UPDATE
                 books
             SET
                 title = ?,
@@ -54,7 +55,8 @@ function booksRepository(): BooksRepository {
                 rating = ?
             WHERE
                 id = ${bookId}`)
-            .run(book.title, book.isbn, book.author, book.pagesCount, book.rating);
+            .run(book.title, book.isbn, book.author, book.pagesCount, book.rating)
+            .lastInsertRowid;
     }
 
     function remove(bookId: BookId): void {

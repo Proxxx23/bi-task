@@ -1,5 +1,6 @@
-import {CreateBookRequest, UpdateBookRequest} from "../controllers/booksController";
 import {Book} from "../models/Book";
+import type {CreateBookRequest} from "../controllers/requests/createBookRequest";
+import type {UpdateBookRequest} from "../controllers/requests/updateBookRequest";
 
 export const createBookFromRequest = (request: CreateBookRequest | UpdateBookRequest): Book => {
     return new Book(
