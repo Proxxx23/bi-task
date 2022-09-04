@@ -1,10 +1,10 @@
 import {Request, Response} from "express";
-import {createBooksRepository} from "../infrastructure/db/booksRepository";
+import {createBooksRepository} from "../infrastructure/sqlite/booksRepository";
 import {StatusCodes} from "http-status-codes";
 import type {BookId} from "../application/db/booksRepository";
 import {DBBook} from "../models/DBBook";
 import type {AddCommentRequest} from "./requests/addCommentRequest";
-import {createCommentsRepository} from "../infrastructure/db/commentsRepository";
+import {createCommentsRepository} from "../infrastructure/sqlite/commentsRepository";
 
 const booksRepository = createBooksRepository();
 const commentsRepository = createCommentsRepository();

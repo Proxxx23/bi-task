@@ -1,12 +1,12 @@
 import {Request, Response} from "express";
-import {createBooksRepository} from "../infrastructure/db/booksRepository";
+import {createBooksRepository} from "../infrastructure/sqlite/booksRepository";
 import {StatusCodes} from "http-status-codes";
 import type {BookId} from "../application/db/booksRepository";
 import {createBookFromRequest} from "../factories/bookFactory";
 import type {CreateBookRequest} from "./requests/createBookRequest";
 import type {UpdateBookRequest} from "./requests/updateBookRequest";
 import {DBBook} from "../models/DBBook";
-import {createCommentsRepository} from "../infrastructure/db/commentsRepository";
+import {createCommentsRepository} from "../infrastructure/sqlite/commentsRepository";
 
 type OffsetQueryParams = {
     perPage?: number,

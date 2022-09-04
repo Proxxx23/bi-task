@@ -1,7 +1,7 @@
 import request from "supertest";
 import {StatusCodes} from "http-status-codes";
 import {createTestServer} from "../testServer";
-import {databaseConnection} from "../infrastructure/db/connection";
+import {databaseConnection} from "../infrastructure/sqlite/connection";
 
 describe('Endpoint to list books', () => {
     const app = createTestServer();

@@ -12,17 +12,10 @@ const db = databaseConnection();
 
 function booksRepository(): BooksRepository {
     async function all(limit: number | undefined = DEFAULT_LIMIT, offset: number | undefined = DEFAULT_OFFSET): Promise<DBBook[]> {
-        // fixme: should not return book.id
         return db.prepare(`SELECT
                                 *
                            FROM
-                                books b
-                           LEFT JOIN
-                                (SELECT * FROM comments LIMIT 5) c
-                           ON
-                                b.id = c.book_id
-                           GROUP BY
-                                b.id
+                                books
                            LIMIT ? OFFSET ?`)
             .all(limit, offset);
     }
