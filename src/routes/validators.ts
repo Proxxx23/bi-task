@@ -73,18 +73,6 @@ export const validateAddBookRequest = [
             }
         )
         .withMessage('Rating must be a numeric value within 1 and 5 range'),
-    body('comment')
-        .optional()
-        .trim()
-        .escape()
-        .isString()
-        .isLength(
-            {
-                min: 1,
-                max: 1000,
-            }
-        )
-        .withMessage('Comment must be a string not longer than 1000 characters'),
 
     (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);
@@ -152,18 +140,6 @@ export const validateUpdateBookRequest = [
             }
         )
         .withMessage('Rating must be a numeric value within 1 and 5 range'),
-    body('comment')
-        .optional()
-        .trim()
-        .escape()
-        .isString()
-        .isLength(
-            {
-                min: 1,
-                max: 1000,
-            }
-        )
-        .withMessage('Comment must be a string not longer than 1000 characters'),
 
     (req: Request, res: Response, next: NextFunction) => {
         const errors = validationResult(req);

@@ -88,7 +88,6 @@ export const destroy = async (req: Request<{ id: BookId }>, res: Response): Prom
     try {
         booksRepository.remove(bookId);
     } catch (err) {
-        console.log(err);
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal error - book could not have been removed!');
     }
 
