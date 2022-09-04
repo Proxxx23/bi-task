@@ -16,7 +16,7 @@ Application will run on [https://localhost:3000](localhost:3000)
 ## Tests
 Tests use `testServer.ts`. NODE_ENV env variable is set to a value different than `"production"` there. It means tests will operate on a test tables.
 
-To run tests: `npm run test`
+To run tests: `npm run test`. First, you must migrate dabatases!
 
 ## Troubleshooting
 There may be a problem with running migrations. Please ensure all four tables in `./db` directory were created after `npm run migrate` command was run.

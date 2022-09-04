@@ -1,10 +1,9 @@
 import fs from "fs";
-import promisedFs from "fs/promises";
 import {resolve} from "path";
 import Database from "better-sqlite3";
 
 (function createBooksTable() {
-  const db = new Database('books.db');
+  const db = new Database('production.db');
 
   db.exec(
     `CREATE TABLE IF NOT EXISTS
@@ -19,10 +18,22 @@ import Database from "better-sqlite3";
         )`
   );
 
-  fs.access(resolve('./db/books.db'), undefined, () => {
+  db.exec(
+    `CREATE TABLE IF NOT EXISTS
+            comments
+        (
+            'id' INTEGER PRIMARY KEY AUTOINCREMENT,
+            'book_id' INTEGER NOT NULL REFERENCES books ON DELETE CASCADE,
+            'comment' TEXT NOT NULL
+        )`
+  );
+
+  db.pragma('foreign_keys = ON');
+
+  fs.access(resolve('./db/production.db'), undefined, () => {
       // No DB yet
     fs.mkdir(resolve('./db'), {}, () => {
-      fs.rename(resolve('./books.db'), resolve('./db/books.db'), () => {})
+      fs.rename(resolve('./production.db'), resolve('./db/production.db'), () => {})
     });
   });
 })();

@@ -12,10 +12,10 @@ type errorResp = {
 describe('Endpoint to add books', () => {
     const app = createTestServer();
 
-    const {connection: db, dbTable} = databaseConnection('books');
+    const db = databaseConnection();
 
-    beforeEach(() => db.exec('DELETE FROM ' + dbTable));
-    afterEach(() => db.exec('DELETE FROM ' + dbTable));
+    beforeEach(() => db.exec('DELETE FROM books'));
+    afterEach(() => db.exec('DELETE FROM books'));
 
     it('responds with 404 code if book with given ISBN is already stored in DB', async () => {
         const isbn = '978-83-962-7331-4';

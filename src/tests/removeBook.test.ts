@@ -5,11 +5,10 @@ import {databaseConnection} from "../infrastructure/db/connection";
 
 describe('Endpoint to remove books', () => {
     const app = createTestServer();
+    const db = databaseConnection();
 
-    const {connection: db, dbTable} = databaseConnection('books');
-
-    beforeEach(() => db.exec('DELETE FROM ' + dbTable));
-    afterAll(() => db.exec('DELETE FROM ' + dbTable));
+    beforeEach(() => db.exec('DELETE FROM books'));
+    afterAll(() => db.exec('DELETE FROM books'));
 
     it('responds with 404 code if book with given id not found in DB', async () => {
         const response = await request(app)
@@ -21,7 +20,7 @@ describe('Endpoint to remove books', () => {
 
     it('removes book from DB and responds with 200 code if book is stored in DB', async () => {
         const stmt = db.prepare(`INSERT INTO
-            ${dbTable}
+            books
                 (
                     title,
                     isbn,
@@ -38,7 +37,7 @@ describe('Endpoint to remove books', () => {
 
         expect(response.statusCode).toBe(StatusCodes.NO_CONTENT);
 
-        const dbCheck = db.prepare(`SELECT * FROM ${dbTable} WHERE id = ?`).get(stmt.lastInsertRowid);
+        const dbCheck = db.prepare(`SELECT * FROM books WHERE id = ?`).get(stmt.lastInsertRowid);
         expect(dbCheck).toBeUndefined();
     });
 });

@@ -4,12 +4,12 @@ import {CommentsRepository} from "../../application/db/commentsRepository";
 
 export const createCommentsRepository = (): CommentsRepository => commentsRepository();
 
-const {dbTable, connection: db} = databaseConnection('comments');
+const db = databaseConnection();
 
 function commentsRepository(): CommentsRepository {
     function add(bookId: BookId, comment: string): void {
         db.prepare(`INSERT INTO
-            ${dbTable}
+            comments
                 (
                     book_id,
                     comment
@@ -20,7 +20,7 @@ function commentsRepository(): CommentsRepository {
     }
 
     function findByBookId(bookId: BookId, limit: number = 5): { comment: string }[] {
-        return db.prepare(`SELECT comment FROM ${dbTable} WHERE book_id = ? ORDER BY id LIMIT ?`).all(bookId, limit);
+        return db.prepare(`SELECT comment FROM comments WHERE book_id = ? LIMIT ?`).all(bookId, limit);
     }
 
     return {

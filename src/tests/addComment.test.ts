@@ -3,17 +3,14 @@ import {StatusCodes} from "http-status-codes";
 import {createTestServer} from "../testServer";
 import {databaseConnection} from "../infrastructure/db/connection";
 
-// Fixme: connectivity problems with a test DB
 describe('Endpoint to add comments', () => {
     const app = createTestServer();
+    const db = databaseConnection();
 
-    const {connection: commentsDb, dbTable: commentsTable} = databaseConnection('comments');
-    const {connection: booksDb, dbTable: booksTable} = databaseConnection('books');
-
-    beforeEach(() => commentsDb.exec('DELETE FROM ' + booksTable));
+    beforeEach(() => db.exec('DELETE FROM books'));
     afterAll(() => {
-        commentsDb.exec('DELETE FROM ' + commentsTable);
-        booksDb.exec('DELETE FROM ' + booksTable);
+        db.exec('DELETE FROM comments');
+        db.exec('DELETE FROM books');
     });
 
     it.skip('responds with 404 code if book with given id does not exist', async () => {
@@ -30,8 +27,8 @@ describe('Endpoint to add comments', () => {
     });
 
     it.skip('adds comment to DB if valid data provided', async () => {
-        const bookId = booksDb.prepare(`INSERT INTO
-            ${booksTable}
+        const bookId = db.prepare(`INSERT INTO
+            books
                 (
                     title,
                     isbn,

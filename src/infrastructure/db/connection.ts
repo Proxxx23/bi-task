@@ -1,19 +1,9 @@
 import Database from "better-sqlite3";
 
-export const databaseConnection = (name: string) => {
-    const dbName = process.env.NODE_ENV === 'production'
-        ? name + '.db'
-        : name + '_test.db';
+export const databaseConnection = () => {
+    const dbFile = `${process.env.NODE_ENV}.db`;
 
-    const connection = new Database(__dirname + '/../../../db/' + dbName, {
+    return new Database(__dirname + `/../../../db/${dbFile}`, {
         fileMustExist: true,
     });
-
-    const dbTable = dbName.replace('.db', '');
-
-    return {
-        connection,
-        dbName,
-        dbTable,
-    };
 }

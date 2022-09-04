@@ -12,10 +12,10 @@ type errorResp = {
 describe('Endpoint to update books', () => {
     const app = createTestServer();
 
-    const {connection: db, dbTable} = databaseConnection('books');
+    const db = databaseConnection();
 
-    beforeEach(() => db.exec('DELETE FROM ' + dbTable));
-    afterEach(() => db.exec('DELETE FROM ' + dbTable));
+    beforeEach(() => db.exec('DELETE FROM books'));
+    afterEach(() => db.exec('DELETE FROM books'));
 
     it('responds with 404 code if book with given id does not exist in DB', async () => {
         const response = await request(app)
@@ -36,7 +36,7 @@ describe('Endpoint to update books', () => {
 
     it('Validation: responds with 422 code if title is too long', async () => {
         const bookId = db.prepare(`INSERT INTO
-            ${dbTable}
+            books
                 (
                     title,
                     isbn,
@@ -73,7 +73,7 @@ describe('Endpoint to update books', () => {
 
     it('Validation: responds with 422 code if authors field is too long', async () => {
         const bookId = db.prepare(`INSERT INTO
-            ${dbTable}
+            books
                 (
                     title,
                     isbn,
@@ -106,7 +106,7 @@ describe('Endpoint to update books', () => {
 
     it('Validation: responds with 422 code if ISBN has wrong format', async () => {
         const bookId = db.prepare(`INSERT INTO
-            ${dbTable}
+            books
                 (
                     title,
                     isbn,
@@ -139,7 +139,7 @@ describe('Endpoint to update books', () => {
 
     it('Validation: responds with 422 code if pages count is greater than allowed 9999 pages', async () => {
         const bookId = db.prepare(`INSERT INTO
-            ${dbTable}
+            books
                 (
                     title,
                     isbn,
@@ -172,7 +172,7 @@ describe('Endpoint to update books', () => {
 
     it('Validation: responds with 422 code if rating is not between allowed values (1 to 5)', async () => {
         const bookId = db.prepare(`INSERT INTO
-            ${dbTable}
+            books
                 (
                     title,
                     isbn,
@@ -206,7 +206,7 @@ describe('Endpoint to update books', () => {
 
     it('Updates book in DB if all fields are valid and returns 204 status code', async () => {
         const bookId = db.prepare(`INSERT INTO
-            ${dbTable}
+            books
                 (
                     title,
                     isbn,
