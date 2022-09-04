@@ -19,18 +19,15 @@ Tests use `testServer.ts`. NODE_ENV env variable is set to a value different tha
 To run tests: `npm run test`. First, you must migrate dabatases!
 
 ## Troubleshooting
-There may be a problem with running migrations. Please ensure all four tables in `./db` directory were created after `npm run migrate` command was run.
-
-## SQLite DB note
-`better-sqlite3` package cannot deal with foreign keys properly, even if supporting these in docs. That's why I've decided to not to make any relations between tables, as it resulted in various problems. 
+There may be a problem with running migrations. Please ensure two databases in `./db` directory were created after `npm run migrate` command was run.
 
 ## Endpoints
 
-| Endpoints                                                                       |
-|---------------------------------------------------------------------------------|
-| [GET] `/books?perPage=n&offset=n` - to list all the books entered into a system |
-| [POST] `/books` - to add book into a system                                     |
-| [PATCH] `/books/:bookId` - to update book in a system                           |
-| [DELETE] `/books/:bookId` - to remove book from a system                        |
-| [POST] `/books/:bookId/comments` - to add comment to a book                     |
+| Endpoints                                                                           |
+|-------------------------------------------------------------------------------------|
+| [GET] `/books?perPage={n}&offset={n}` - to list all the books entered into a system |
+| [POST] `/books` - to add book into a system                                         |
+| [PATCH] `/books/:id` - to update book in a system                                   |
+| [DELETE] `/books/:id` - to remove book from a system                                |
+| [POST] `/books/:id/comments` - to add comment to a book                             |
 
