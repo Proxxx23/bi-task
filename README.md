@@ -14,12 +14,12 @@ Copy `.env.example` file into `.env` file.
 Application will run on [https://localhost:3000](localhost:3000)
 
 ## Tests
-Tests use `testServer.ts`. NODE_ENV env variable is set to a value different than `"production"` there. It means tests will operate on a test tables.
+Tests use `testServer.ts`. NODE_ENV env variable is set to a `"test"` value there. It means tests will operate on a test database.
 
 To run tests: `npm run test`. First, you must migrate dabatases!
 
 ## Troubleshooting
-There may be a problem with running migrations. Please ensure two databases in `./db` directory were created after `npm run migrate` command was run.
+There may be a problem with running migrations. Please ensure two databases in `db` directory were created after `npm run migrate` command was run. If not, remove everything from `db` directory and run `npm run migrate` command one more time.
 
 ## Endpoints
 
